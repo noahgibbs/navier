@@ -137,15 +137,19 @@
                     Simple fluid dynamics simulator based on the navier-stokes equations, implemented in JavaScript.
                     <ul>
                         <li>Click and drag to add density and velocity</li>
-                        <li>Add density source with alt-click or anything other than the left-button</li>
+                        <li>Add density source with alt-click or right-button</li>
                     </ul>
                     <div id = log></div>
                     <button onclick="startAnimation()">start</button>
                     <button onclick="stopAnimation()">stop</button>
                     <button onclick="field.reset(); frames = 0; sources = [];">reset</button><br />
                     <button onclick="field.setDisplayFunction(toggleDisplayFunction(canvas))">Toggle drawing mode</button><br />
+
+                    Decay:
+                    <input id="decay" type="range" onchange="field.setDecay(1.0 - 0.001 * event.target.value)" min='0' max='10' value='2'><br/>
+
                     Solver Iterations:
-                    <input id=iterations type="range" onchange="field.setIterations(event.target.value)" min=1 max=75><br />
+                    <input id="iterations" type="range" onchange="field.setIterations(event.target.value)" min=1 max=75><br />
                     Resolution:
                     <select id=resolution onchange="updateRes()">
                         <option>8</option>

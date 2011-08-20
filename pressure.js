@@ -284,11 +284,16 @@ function FluidField(canvas) {
     this.setDisplayFunction = function(func) {
         displayFunc = func;
     }
-    
+
     this.iterations = function() { return iterations; }
     this.setIterations = function(iters) {
         if (iters > 0 && iters <= 100)
            iterations = iters;
+    }
+    this.decay = function() { return decay; }
+    this.setDecay = function(newDecay) {
+        if (newDecay >= 0 && newDecay <= 1.0)
+           decay = newDecay;
     }
     this.setUICallback = function(callback) {
         uiCallback = callback;
