@@ -1,0 +1,166 @@
+<!doctype HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            body {
+                background: #333333;
+                color: white;
+                font-family: Helvetica;
+            }
+        </style>
+        <title>Simple fluid dynamics simulator</title> <!-- Based on Oliver's -->
+        <script src="pressure.js"></script>
+        <script src="pressure-display.js"></script>
+        <script>
+            onmouseup = function() { mouseIsDown = false; }
+            function log(message) {
+                document.getElementById("log").innerHTML = message;
+            }
+            var frames = 0;
+            var force = 5;
+            var source = 100;
+            var sources = [];
+            var omx, omy;
+            var mx, my;
+            var mouseIsDown = false;
+            var res;
+            var displaySize = 512;
+            var fieldRes;
+            var canvas;
+            function prepareFrame(field)
+            {
+                var canvas = document.getElementById("canvas");
+                if ((omx >= 0 && omx < displaySize && omy >= 0 && omy < displaySize) && mouseIsDown) {
+                    var dx = mx - omx;
+                    var dy = my - omy;
+                    var length = (Math.sqrt(dx * dx + dy * dy) + 0.5) | 0;
+                    if (length < 1) length = 1;
+                    for (var i = 0; i < length; i++) {
+                        var x = (((omx + dx * (i / length)) / displaySize) * field.width()) | 0
+                        var y = (((omy + dy * (i / length)) / displaySize) * field.height()) | 0;
+                        field.setVelocity(x, y, dx, dy);
+                        field.setDensity(x, y, 50);
+                    }
+                    omx = mx;
+                    omy = my;
+                }
+                for (var i = 0; i < sources.length; i++) {
+                        var x = ((sources[i][0] / displaySize) * field.width()) | 0;
+                        var y = ((sources[i][1] / displaySize) * field.height()) | 0;
+                        field.setDensity(x, y, 30);
+                }
+            }
+            var running = false;
+            function stopAnimation() {
+                running = false;
+                clearTimeout(interval);
+            }
+            function startAnimation() {
+                if (running)
+                    return;
+                running=true;
+                interval = setTimeout(updateFrame, 10);
+            }
+            var start = new Date;
+            var frames = 0;
+            function updateFrame() {
+                field.update();
+                var end = new Date;
+                frames++;
+                if ((end - start) > 1000) {
+                    log("FPS: " + ((1000*frames/(end - start) + 0.5)|0));
+                    start = end;
+                    frames=0;
+                }
+                if (running)
+                    interval = setTimeout(updateFrame, 10);
+            }
+            var options = {};
+            try {
+                options = JSON.parse(location.search.substring(1));
+            } catch(e) {
+            }
+            window.onload=function(){
+                canvas = document.getElementById("canvas");
+                field = new FluidField(canvas);
+                document.getElementById("iterations").value = 10;
+                res = document.getElementById("resolution");
+                res.value = options.res || "64";
+                field.setUICallback(prepareFrame);
+                updateRes = function() {
+                    var r = parseInt(res.value);
+                    canvas.width = r;
+                    canvas.height = r;
+                    fieldRes = r;
+                    field.setResolution(r, r);
+                }
+                updateRes();            
+                function getTopLeftOfElement(element) {
+                    var top = 0;
+                    var left = 0;
+                    do {
+                      top += element.offsetTop;
+                      left += element.offsetLeft;
+                    } while(element = element.offsetParent);
+                    return {left: left, top: top};
+                }
+            
+                canvas.onmousedown = function(event) {
+                    var o = getTopLeftOfElement(canvas);
+                    omx = mx = event.clientX - o.left;
+                    omy = my = event.clientY - o.top;
+                    if (!event.altKey && event.button == 0)
+                        mouseIsDown = true;
+                    else
+                        sources.push([mx, my]);
+                    event.preventDefault();
+                    return false;
+                }
+                canvas.onmousemove = function(event) {
+                    var o = getTopLeftOfElement(canvas);
+                    mx = event.clientX - o.left;
+                    my = event.clientY - o.top;
+                }
+                field.setDisplayFunction(toggleDisplayFunction(canvas));
+                startAnimation();
+            }
+        </script>
+    </head>
+    <body>
+       <table style="width: 100%;">
+            <tr>
+                <td>
+                    <canvas id=canvas style="width: 512px; height: 512px;" width=512 height=512></canvas>
+                </td>
+                <td>
+                    Simple fluid dynamics simulator based on the navier-stokes equations, implemented in JavaScript.
+                    <ul>
+                        <li>Click and drag to add density and velocity</li>
+                        <li>Add density source with alt-click or anything other than the left-button</li>
+                    </ul>
+                    <div id = log></div>
+                    <button onclick="startAnimation()">start</button>
+                    <button onclick="stopAnimation()">stop</button>
+                    <button onclick="field.reset(); frames = 0; sources = [];">reset</button><br />
+                    <button onclick="field.setDisplayFunction(toggleDisplayFunction(canvas))">Toggle drawing mode</button><br />
+                    Solver Iterations:
+                    <input id=iterations type="range" onchange="field.setIterations(event.target.value)" min=1 max=75><br />
+                    Resolution:
+                    <select id=resolution onchange="updateRes()">
+                        <option>8</option>
+                        <option>16</option>
+                        <option>24</option>
+                        <option>32</option>
+                        <option>48</option>
+                        <option>64</option>
+                        <option>96</option>
+                        <option>128</option>
+                        <option>256</option>
+                        <option>512</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
