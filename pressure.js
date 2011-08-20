@@ -218,12 +218,16 @@ function FluidField(canvas) {
         set_bnd(1, u);
         set_bnd(2, v);
     }
-    
+
     function dens_step(x, x0, u, v, dt)
     {
         addFields(x, x0, dt);
         diffuse(0, x0, x, dt );
         advect(0, x, x0, u, v, dt );
+
+        for (var i = 0; i <= size; i++) {
+            dens[i] *= decay;
+        }
     }
     
     function vel_step(u, v, u0, v0, dt)
@@ -291,6 +295,7 @@ function FluidField(canvas) {
     }
     var iterations = 10;
     var visc = 0.5;
+    var decay = 0.998;
     var dt = 0.1;
     var dens;
     var dens_prev;
