@@ -147,28 +147,35 @@
                     <button onclick="field.reset(); frames = 0; sources = [];">reset</button><br />
                     <button onclick="field.setDisplayFunction(toggleDisplayFunction(canvas))">Toggle drawing mode</button><br />
 
-                    Decay:
-                    <input id="decay" type="range" onchange="field.setDecay(1.0 - 0.001 * event.target.value)" min='0' max='10' step='1'><br/>
-
-                    Viscosity:
-                    <input id="viscosity" type="range" onchange="field.setViscosity(event.target.value)" min='0' max='10.0' step='0.5'><br/>
-
-                    Solver Iterations:
-                    <input id="iterations" type="range" onchange="field.setIterations(event.target.value)" min=1 max=75><br />
-                    Resolution:
-                    <select id=resolution onchange="updateRes()">
-                        <option>8</option>
-                        <option>16</option>
-                        <option>24</option>
-                        <option>32</option>
-                        <option>48</option>
-                        <option>64</option>
-                        <option>96</option>
-                        <option>128</option>
-                        <option>256</option>
-                        <option>512</option>
-                    </select>
-                </td>
+                    <table>
+                      <tr>
+                        <td>Decay</td>
+                        <td><input id="decay" type="range" onchange="field.setDecay(1.0 - 0.001 * event.target.value)" min='0' max='10' step='1'></td>
+                      </tr>
+                      <tr>
+                        <td>Viscosity</td>
+                        <td><input id="viscosity" type="range" onchange="field.setViscosity(event.target.value)" min='0' max='10.0' step='0.5'></td>
+                      </tr>
+                      <tr>
+                        <td>Solver<br/>Iterations</td>
+                        <td><input id="iterations" type="range" onchange="field.setIterations(event.target.value)" min=1 max=75></td>
+                      </tr>
+                      <tr>
+                        <td>Resolution</td>
+                        <td><select id=resolution onchange="updateRes()">
+                          <option>16</option>
+                          <option>24</option>
+                          <option>32</option>
+                          <option>48</option>
+                          <option>64</option>
+                          <option>96</option>
+                          <option>128</option>
+                          <option>256</option>
+                          <option>512</option>
+                        </select></td>
+                     </tr>
+                   </table>
+               </td>
             </tr>
         </table>
     </body>
