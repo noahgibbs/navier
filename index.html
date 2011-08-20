@@ -10,6 +10,7 @@
             }
         </style>
         <title>Simple fluid dynamics simulator</title> <!-- Based on Oliver's -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
         <script src="pressure.js"></script>
         <script src="pressure-display.js"></script>
         <script>
@@ -31,6 +32,7 @@
             function prepareFrame(field)
             {
                 var canvas = document.getElementById("canvas");
+                var vel_factor = $("#mouse_velocity").val();
                 if ((omx >= 0 && omx < displaySize && omy >= 0 && omy < displaySize) && mouseIsDown) {
                     var dx = mx - omx;
                     var dy = my - omy;
@@ -39,16 +41,19 @@
                     for (var i = 0; i < length; i++) {
                         var x = (((omx + dx * (i / length)) / displaySize) * field.width()) | 0
                         var y = (((omy + dy * (i / length)) / displaySize) * field.height()) | 0;
-                        field.setVelocity(x, y, dx, dy);
-                        field.setDensity(x, y, 50);
+                        field.setVelocity(x, y, dx * vel_factor, dy * vel_factor);
+                        field.setDensity(x, y, $("#mouse_density").val());
                     }
                     omx = mx;
                     omy = my;
                 }
+                var vel_factor = $("#source_velocity").val();
                 for (var i = 0; i < sources.length; i++) {
                         var x = ((sources[i][0] / displaySize) * field.width()) | 0;
                         var y = ((sources[i][1] / displaySize) * field.height()) | 0;
-                        field.setDensity(x, y, 30);
+                        field.setDensity(x, y, $("#source_density").val());
+                        // For now, direction is right and slightly down
+                        field.setVelocity(x, y, vel_factor, vel_factor * 0.2);
                 }
             }
             var running = false;
@@ -89,6 +94,10 @@
                 res.value = options.res || "128";
                 document.getElementById("decay").value = 2;
                 document.getElementById("viscosity").value = 5;
+                document.getElementById("mouse_velocity").value = 1.0;
+                document.getElementById("mouse_density").value = 30;
+                document.getElementById("source_velocity").value = 0.0;
+                document.getElementById("source_density").value = 15;
                 field.setUICallback(prepareFrame);
                 updateRes = function() {
                     var r = parseInt(res.value);
@@ -178,5 +187,37 @@
                </td>
             </tr>
         </table>
+
+      <table>
+        <tr>
+          <td>
+            Mouse Cursor
+            <table>
+              <tr>
+                <td>Velocity</td>
+                <td><input type="range" id="mouse_velocity" min="0.0" max="10.0" step="0.5" /> </td>
+              </tr>
+              <tr>
+                <td>Density</td>
+                <td><input type="range" id="mouse_density" min="5" max="100" step="5" /> </td>
+              </tr>
+            </table>
+          </td>
+          <td style="width: 50px"></td>
+          <td>
+            Density Sources
+            <table>
+              <tr>
+                <td>Velocity</td>
+                <td><input type="range" id="source_velocity" min="0.0" max="10.0" step="0.5" /></td>
+              </tr>
+              <tr>
+                <td>Density</td>
+                <td><input type="range" id="source_density" min="5" max="100" step="5" /></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
     </body>
 </html>
