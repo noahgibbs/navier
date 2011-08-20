@@ -86,7 +86,7 @@
                 field = new FluidField(canvas);
                 document.getElementById("iterations").value = 10;
                 res = document.getElementById("resolution");
-                res.value = options.res || "64";
+                res.value = options.res || "128";
                 field.setUICallback(prepareFrame);
                 updateRes = function() {
                     var r = parseInt(res.value);
