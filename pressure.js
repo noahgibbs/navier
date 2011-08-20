@@ -295,6 +295,11 @@ function FluidField(canvas) {
         if (newDecay >= 0 && newDecay <= 1.0)
            decay = newDecay;
     }
+    this.viscosity = function() { return visc; }
+    this.setViscosity = function(newVisc) {
+        if (newVisc >= 0 && newVisc <= 1.0)
+           visc = newVisc;
+    }
     this.setUICallback = function(callback) {
         uiCallback = callback;
     }

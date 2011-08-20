@@ -87,6 +87,8 @@
                 document.getElementById("iterations").value = 10;
                 res = document.getElementById("resolution");
                 res.value = options.res || "128";
+                document.getElementById("decay").value = 2;
+                document.getElementById("viscosity").value = 5;
                 field.setUICallback(prepareFrame);
                 updateRes = function() {
                     var r = parseInt(res.value);
@@ -146,7 +148,10 @@
                     <button onclick="field.setDisplayFunction(toggleDisplayFunction(canvas))">Toggle drawing mode</button><br />
 
                     Decay:
-                    <input id="decay" type="range" onchange="field.setDecay(1.0 - 0.001 * event.target.value)" min='0' max='10' value='2'><br/>
+                    <input id="decay" type="range" onchange="field.setDecay(1.0 - 0.001 * event.target.value)" min='0' max='10' step='1'><br/>
+
+                    Viscosity:
+                    <input id="viscosity" type="range" onchange="field.setViscosity(event.target.value)" min='0' max='10.0' step='0.5'><br/>
 
                     Solver Iterations:
                     <input id="iterations" type="range" onchange="field.setIterations(event.target.value)" min=1 max=75><br />
