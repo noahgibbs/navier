@@ -1,0 +1,3 @@
+* Multiple density fields
+  * Turn off density field when sigma(density^2) goes below some threshold
+  * Turn off velocities when all density fields go away
