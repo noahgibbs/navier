@@ -2,3 +2,21 @@ Fluid Dynamics Simulator
 
 Based on Oliver's Simple Fluid Dynamics Simulator, downloaded at random.
 So his copyright should remain intact on pressure.js and pressure-display.js.
+
+That, in turn, is based on Jos Stam's GDC03 paper.
+
+PERFORMANCE
+
+JavaScript frame rate, on my machine, determined highly unscientifically:
+
+With display: 40-50 fps
+Without display: 50-60 fps, usually 57-58
+
+C frame rate on my machine, similarly determined:
+
+With display: 37fps
+Without display: 41fps
+Without display at -O3: 64fps
+
+Built with: gcc -Wall -framework GLUT -framework OpenGL -framework Cocoa demo.c solver.c -o demo_solver
+Or the same, plus -O3

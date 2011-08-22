@@ -16,7 +16,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <GL/glut.h>
+#include <time.h>
+#include <GLUT/glut.h>
 
 /* macros */
 
@@ -42,6 +43,9 @@ static int win_x, win_y;
 static int mouse_down[3];
 static int omx, omy, mx, my;
 
+static int frames = 0;
+static int no_display = 1;
+static time_t start_time = 0;
 
 /*
   ----------------------------------------------------------------------
@@ -217,8 +221,15 @@ static void key_func ( unsigned char key, int x, int y )
 
 		case 'q':
 		case 'Q':
+                  {
+                    time_t cur_time = time(NULL);
+                    int secs = (cur_time - start_time);
+
+                    fprintf(stderr, "Frames: %d, seconds: %d\nFPS: %f\n", frames, secs, (float)frames/(float)secs);
+
 			free_data ();
 			exit ( 0 );
+                  }
 			break;
 
 		case 'v':
@@ -263,12 +274,18 @@ static void idle_func ( void )
 
 static void display_func ( void )
 {
+  if(start_time == 0)
+    start_time = time(NULL);
+
+  frames++;
+  if(!no_display) {
 	pre_display ();
 
 		if ( dvel ) draw_velocity ();
 		else		draw_density ();
 
 	post_display ();
+  }
 }
 
 
@@ -313,7 +330,7 @@ int main ( int argc, char ** argv )
 {
 	glutInit ( &argc, argv );
 
-	if ( argc != 1 && argc != 6 ) {
+	if ( argc != 1 && argc != 7 ) {
 		fprintf ( stderr, "usage : %s N dt diff visc force source\n", argv[0] );
 		fprintf ( stderr, "where:\n" );\
 		fprintf ( stderr, "\t N      : grid resolution\n" );
