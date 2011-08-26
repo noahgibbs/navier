@@ -145,7 +145,36 @@ function FluidField(canvas) {
         var a = 0;
         lin_solve2(x, x0, y, y0, a, 1 + 4 * a);
     }
-    
+
+    var vertical_wall_x = [25.5, 50.5, 75.5];
+    var vertical_wall_y = [[0, 75], [25, 100], [0, 75]];
+
+    var counter = 0;
+
+    function snap_to_wall(from_x, from_y, to_x, to_y) {
+	if(Math.abs(from_x - to_x) <= 0.0001) return false;
+	for(var i = 0; i < vertical_wall_x.length; i++) {
+	    wall_x = vertical_wall_x[i];
+	    wall_top_y = vertical_wall_y[i][0];
+	    wall_bot_y = vertical_wall_y[i][1];
+
+            if((from_x <= wall_x && to_x >= wall_x)
+               || (from_x >= wall_x && to_x <= wall_x)) {
+                if(from_y >= wall_top_y && from_y <= wall_bot_y) {
+		    t = Math.abs((from_x - wall_x) / (from_x - to_x));
+		    ++counter;
+		    if(counter % 100) {
+			console.debug("  From (" + from_x + "," + from_y + ") to (" + to_x + "," + to_y + ")");
+			console.debug("Intersection!  Returned t == " + t);
+		    }
+		    return t;
+		}
+            }
+	}
+
+	return false;
+    }
+
     function advect(b, d, d0, u, v, dt)
     {
         var Wdt0 = dt * width;
@@ -155,20 +184,37 @@ function FluidField(canvas) {
         for (var j = 1; j<= height; j++) {
             var pos = j * rowSize;
             for (var i = 1; i <= width; i++) {
-                var x = i - Wdt0 * u[++pos]; 
+		++pos;
+
+		// Where did velocity come from?
+                var x = i - Wdt0 * u[pos]; 
                 var y = j - Hdt0 * v[pos];
+
+		// Snap to some boundary
+		t = snap_to_wall(i, j, x, y);
+
+		if (t !== false) {
+		    continue;  // Don't propagate density at all.
+		    x = i + Wdt0 * u[pos] * t;
+		    y = j + Hdt0 * v[pos] * t;
+		}
+
                 if (x < 0.5)
                     x = 0.5;
                 else if (x > Wp5)
                     x = Wp5;
-                var i0 = x | 0;
-                var i1 = i0 + 1;
                 if (y < 0.5)
                     y = 0.5;
                 else if (y > Hp5)
                     y = Hp5;
+
+		// Find nearest four grid points
+                var i0 = x | 0;
+                var i1 = i0 + 1;
                 var j0 = y | 0;
                 var j1 = j0 + 1;
+
+		// Start linear interpolation
                 var s1 = x - i0;
                 var s0 = 1 - s1;
                 var t1 = y - j0;
