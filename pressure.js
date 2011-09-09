@@ -98,13 +98,13 @@ function FluidField(canvas) {
             }
         }
     }
-    
+
     function diffuse(b, x, x0, dt)
     {
-        var a = 0;
+        var a = diffusion;
         lin_solve(b, x, x0, a, 1 + 4*a);
     }
-    
+
     function lin_solve2(x, x0, y, y0, a, c)
     {
         if (a === 0 && c === 1) {
@@ -142,7 +142,7 @@ function FluidField(canvas) {
     
     function diffuse2(x, x0, y, y0, dt)
     {
-        var a = 0;
+        var a = diffusion;
         lin_solve2(x, x0, y, y0, a, 1 + 4 * a);
     }
     
@@ -295,6 +295,11 @@ function FluidField(canvas) {
         if (newDecay >= 0 && newDecay <= 1.0)
            decay = newDecay;
     }
+    this.diffusion = function() { return diffusion; }
+    this.setDiffusion = function(newDiffusion) {
+        if (newDiffusion >= 0 && newDiffusion <= 1.0)
+           diffusion = newDiffusion;
+    }
     this.viscosity = function() { return visc; }
     this.setViscosity = function(newVisc) {
         if (newVisc >= 0 && newVisc <= 1.0)
@@ -306,6 +311,7 @@ function FluidField(canvas) {
     var iterations = 10;
     var visc = 0.5;
     var decay = 0.998;
+    var diffusion = 0;
     var dt = 0.1;
     var dens;
     var dens_prev;

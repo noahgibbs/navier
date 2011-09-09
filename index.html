@@ -93,6 +93,7 @@
                 res = document.getElementById("resolution");
                 res.value = options.res || "128";
                 document.getElementById("decay").value = 2;
+                document.getElementById("diffusion").value = 0;
                 document.getElementById("viscosity").value = 5;
                 document.getElementById("mouse_velocity").value = 1.0;
                 document.getElementById("mouse_density").value = 30;
@@ -160,6 +161,10 @@
                       <tr>
                         <td>Decay</td>
                         <td><input id="decay" type="range" onchange="field.setDecay(1.0 - 0.001 * event.target.value)" min='0' max='10' step='1'></td>
+                      </tr>
+                      <tr>
+                        <td>Diffusion Speed</td>
+                        <td><input id="diffusion" type="range" onchange="field.setDiffusion(event.target.value)" min='0' max='8' step='1'></td>
                       </tr>
                       <tr>
                         <td>Viscosity</td>
