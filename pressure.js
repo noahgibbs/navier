@@ -30,9 +30,14 @@ function FluidField(canvas) {
         for (var i=0; i<size ; i++ ) x[i] += dt*s[i];
     }
 
+    var vertical_wall_x = [25.5, 50.5, 75.5];
+    var vertical_wall_y = [[0, 75], [25, 100], [0, 75]];
+
     function set_bnd(b, x)
     {
         if (b===1) {
+	    // Horizontal velocity
+
             for (var i = 1; i <= width; i++) {
                 x[i] =  x[i + rowSize];
                 x[i + (height+1) *rowSize] = x[i + height * rowSize];
@@ -41,8 +46,13 @@ function FluidField(canvas) {
             for (var j = 1; i <= height; i++) {
                 x[j * rowSize] = -x[1 + j * rowSize];
                 x[(width + 1) + j * rowSize] = -x[width + j * rowSize];
+
+		// Vertical wall at 75
+		x[j * rowSize + 75] = -x[j * rowSize + 75 + 1]
             }
         } else if (b === 2) {
+	    // Vertical velocity
+
             for (var i = 1; i <= width; i++) {
                 x[i] = -x[i + rowSize];
                 x[i + (height + 1) * rowSize] = -x[i + height * rowSize];
@@ -51,8 +61,13 @@ function FluidField(canvas) {
             for (var j = 1; j <= height; j++) {
                 x[j * rowSize] =  x[1 + j * rowSize];
                 x[(width + 1) + j * rowSize] =  x[width + j * rowSize];
+
+		// Vertical wall at 75
+		x[j * rowSize + 75] = x[j * rowSize + 75 + 1]
             }
         } else {
+	    // Density
+
             for (var i = 1; i <= width; i++) {
                 x[i] =  x[i + rowSize];
                 x[i + (height + 1) * rowSize] = x[i + height * rowSize];
@@ -61,6 +76,9 @@ function FluidField(canvas) {
             for (var j = 1; j <= height; j++) {
                 x[j * rowSize] =  x[1 + j * rowSize];
                 x[(width + 1) + j * rowSize] =  x[width + j * rowSize];
+
+		// Vertical wall at 75
+		x[j * rowSize + 75] = x[j * rowSize + 75 + 1]
             }
         }
         var maxEdge = (height + 1) * rowSize;
