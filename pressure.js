@@ -49,6 +49,7 @@ function FluidField(canvas) {
 
 		// Vertical wall at 75
 		x[j * rowSize + 75] = -x[j * rowSize + 75 + 1]
+		x[j * rowSize + 75 - 2] = -x[j * rowSize + 75 - 1]
             }
         } else if (b === 2) {
 	    // Vertical velocity
@@ -64,6 +65,7 @@ function FluidField(canvas) {
 
 		// Vertical wall at 75
 		x[j * rowSize + 75] = x[j * rowSize + 75 + 1]
+		x[j * rowSize + 75 - 2] = x[j * rowSize + 75 - 1]
             }
         } else {
 	    // Density
@@ -79,6 +81,7 @@ function FluidField(canvas) {
 
 		// Vertical wall at 75
 		x[j * rowSize + 75] = x[j * rowSize + 75 + 1]
+		x[j * rowSize + 75 - 2] = x[j * rowSize + 75 - 1]
             }
         }
         var maxEdge = (height + 1) * rowSize;
