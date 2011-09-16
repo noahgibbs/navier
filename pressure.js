@@ -48,8 +48,9 @@ function FluidField(canvas) {
                 x[(width + 1) + j * rowSize] = -x[width + j * rowSize];
 
 		// Vertical wall at 75
-		x[j * rowSize + 75] = -x[j * rowSize + 75 + 1]
-		x[j * rowSize + 75 - 2] = -x[j * rowSize + 75 - 1]
+		x[j * rowSize + 75 + 1] = -x[j * rowSize + 75 + 2]
+		x[j * rowSize + 75 + 0] = 0
+		x[j * rowSize + 75 - 1] = -x[j * rowSize + 75 - 2]
             }
         } else if (b === 2) {
 	    // Vertical velocity
@@ -64,8 +65,9 @@ function FluidField(canvas) {
                 x[(width + 1) + j * rowSize] =  x[width + j * rowSize];
 
 		// Vertical wall at 75
-		x[j * rowSize + 75] = x[j * rowSize + 75 + 1]
-		x[j * rowSize + 75 - 2] = x[j * rowSize + 75 - 1]
+		x[j * rowSize + 75 + 1] = x[j * rowSize + 75 + 2]
+		x[j * rowSize + 75 + 0] = 0
+		x[j * rowSize + 75 - 1] = x[j * rowSize + 75 - 1]
             }
         } else {
 	    // Density
@@ -80,8 +82,9 @@ function FluidField(canvas) {
                 x[(width + 1) + j * rowSize] =  x[width + j * rowSize];
 
 		// Vertical wall at 75
-		x[j * rowSize + 75] = x[j * rowSize + 75 + 1]
-		x[j * rowSize + 75 - 2] = x[j * rowSize + 75 - 1]
+		x[j * rowSize + 75 + 1] = x[j * rowSize + 75 + 2]
+                x[j * rowSize + 75 + 0] = 0
+		x[j * rowSize + 75 - 1] = x[j * rowSize + 75 - 2]
             }
         }
         var maxEdge = (height + 1) * rowSize;
@@ -160,13 +163,13 @@ function FluidField(canvas) {
             }
         }
     }
-    
+
     function diffuse2(x, x0, y, y0, dt)
     {
         var a = diffusion;
         lin_solve2(x, x0, y, y0, a, 1 + 4 * a);
     }
-    
+
     function advect(b, d, d0, u, v, dt)
     {
         var Wdt0 = dt * width;
@@ -178,10 +181,19 @@ function FluidField(canvas) {
             for (var i = 1; i <= width; i++) {
                 var x = i - Wdt0 * u[++pos]; 
                 var y = j - Hdt0 * v[pos];
-                if (x < 0.5)
-                    x = 0.5;
-                else if (x > Wp5)
-                    x = Wp5;
+
+		if (i > 75) {
+                    if (x < 76.5)
+                        x = 76.5;
+		    else if (x > Wp5)
+			x = Wp5;
+		} else {
+                    if (x < 0.5)
+                        x = 0.5;
+		    else if (x > 74.5)
+			x = 74.5;
+		}
+
                 var i0 = x | 0;
                 var i1 = i0 + 1;
                 if (y < 0.5)
@@ -201,7 +213,7 @@ function FluidField(canvas) {
         }
         set_bnd(b, d);
     }
-    
+
     function project(u, v, p, div)
     {
         var h = -0.5 / Math.sqrt(width * height);
